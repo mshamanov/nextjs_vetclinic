@@ -1,0 +1,52 @@
+.input-group {
+    display: flex;
+    flex-direction: column;
+    padding: 5px 7px;
+}
+
+.input-group label {
+    color: #8d99ae;
+    font-size: 0.95rem;
+    font-weight: 200;
+    margin-bottom: 0.5rem;
+}
+
+.input-group input {
+    background-color: #040620;
+    padding: .5rem .75rem;
+    font-size: 0.95rem;
+    font-weight: 300;
+    font-family: Open Sans, sans-serif;
+    width: 100%;
+    color: #8d99ae;
+    line-height: 1.5;
+    border: none;
+    border-radius: 5px;
+}
+
+.input-group input:focus {
+    outline: none;
+}
+
+.input-group input.disabled {
+    font-weight: 600;
+    background-color: transparent;
+}
+
+.actions {
+    display: flex;
+    margin: 1rem 0;
+    gap: 1rem;
+}
+
+.input-group input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.6;
+    filter: invert(0.8);
+}
+
+@media (max-width: 768px) {
+    .actions {
+        margin: .2rem auto;
+    }
+}

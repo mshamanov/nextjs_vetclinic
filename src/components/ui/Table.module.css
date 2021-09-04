@@ -1,0 +1,51 @@
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th p {
+    font-size: 0.85rem;
+    margin: 0 10px 0 0;
+    display: inline-block;
+    text-transform: uppercase;
+}
+
+.table th {
+    white-space: nowrap;
+}
+
+.table td,
+.table th {
+    padding: .75rem;
+    text-align: left;
+    vertical-align: center;
+}
+
+.table tbody tr {
+    border-top: 1px solid rgba(51, 51, 51, .35);
+    font-size: 14px;
+}
+
+.table tbody tr:nth-child(odd) {
+    background-color: #00152f;
+}
+
+.table tbody tr:hover {
+    background-color: #001936;
+}
+
+.table .actions-col {
+    width: 10%;
+}
+
+.table .actions-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 7px;
+}
+
+.table .sort-by {
+    cursor: pointer;
+}

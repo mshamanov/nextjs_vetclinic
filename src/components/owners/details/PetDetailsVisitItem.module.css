@@ -1,0 +1,33 @@
+.pet-visit-item {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.6rem;
+    font-size: 14px;
+    border-radius: 0;
+    border-top: 1px solid #040620;
+    background-color: rgba(0, 21, 47, 0.76);
+}
+
+.pet-visit-data {
+    display: inline-block;
+    text-align: left;
+}
+
+.pet-visit-data-date {
+    width: 20%;
+}
+
+.pet-visit-data-description {
+    width: 60%;
+}
+
+.pet-visit-data-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 5px;
+    width: 20%;
+    text-align: right;
+}

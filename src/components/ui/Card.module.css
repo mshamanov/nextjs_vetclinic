@@ -1,0 +1,12 @@
+.card {
+    display: flex;
+    min-width: 90%;
+    width: 100%;
+    flex-direction: column;
+    margin: 1rem auto;
+    padding: 10px;
+    box-shadow: 0 2px 3px #001d3d;
+    background: linear-gradient(to right, #001d3d, #02264d);
+    border-radius: 10px;
+    overflow: auto;
+}

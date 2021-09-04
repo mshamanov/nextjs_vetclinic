@@ -1,0 +1,17 @@
+.title-wrapper {
+    display: flex;
+    width: 100%;
+    margin: 0 auto 0 0;
+    align-items: center;
+}
+
+.bold {
+    font-weight: 800;
+}
+
+@media (max-width: 768px) {
+    .title-wrapper {
+        margin: .5rem auto;
+        justify-content: center;
+    }
+}

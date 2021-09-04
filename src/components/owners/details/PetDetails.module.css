@@ -1,0 +1,23 @@
+.pet-details-group {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.pet-details-item {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.pet-details-visits-item {
+    justify-content: space-between;
+}
+
+@media (max-width: 768px) {
+    .pet-details-group {
+        flex-direction: column;
+        gap: 3px;
+    }
+}

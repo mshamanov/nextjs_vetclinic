@@ -1,0 +1,34 @@
+.btn {
+    display: inline-block;
+    padding: 1px 3px;
+    font-size: 11px;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 1.5;
+    color: #eaeaea;
+    background-color: rgba(65, 121, 207, 0.8);
+    border: 1px solid transparent;
+    border-radius: .3rem;
+    transition: all .15s ease-in-out;
+    cursor: pointer;
+}
+
+.btn-success {
+    background-color: #2d8515;
+}
+
+.btn-danger {
+    background-color: rgba(219, 42, 52, 0.8);
+}
+
+.btn-md {
+    padding: .3rem .75rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    border-radius: .3rem;
+}
+
+.btn:hover {
+    box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.1);
+}

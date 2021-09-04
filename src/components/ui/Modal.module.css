@@ -1,0 +1,73 @@
+.backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 20;
+    background-color: rgba(0, 0, 0, 0.75);
+}
+
+.modal {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    top: 20vh;
+    left: 5%;
+    width: 90%;
+    background-color: #001936;
+    padding: 0;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+    z-index: 30;
+    animation: slide-down 300ms ease-out forwards;
+}
+
+.modal-title {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    height: 2.5rem;
+    font-weight: 600;
+    background-color: #003566;
+    padding: .4rem .5rem;
+}
+
+.modal-success {
+    background-color: #2d8515;
+}
+
+.modal-danger {
+    background-color: rgba(219, 42, 52, 0.8);
+}
+
+.modal-content {
+    padding: 0.5rem 1.5rem;
+}
+
+.modal-actions {
+    padding: 0.7rem;
+    text-align: right;
+}
+
+.modal-actions button {
+    margin-right: 1rem;
+}
+
+@media (min-width: 768px) {
+    .modal {
+        width: 30rem;
+        left: calc(50% - 15rem);
+    }
+}
+
+@keyframes slide-down {
+    from {
+        opacity: 0;
+        transform: translateY(-3rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

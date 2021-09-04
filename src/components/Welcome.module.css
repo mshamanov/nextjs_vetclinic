@@ -1,0 +1,52 @@
+.welcome {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100%;
+    height: 100%;
+}
+
+.welcome h1 {
+    display: inline-block;
+    opacity: 0;
+    margin: 4rem auto;
+    font-size: 4rem;
+    white-space: nowrap;
+    animation: logo-appear 1s ease-out forwards;
+}
+
+.paw-left {
+    display: inline-block;
+    opacity: 0;
+    animation: paw-appear 1s linear 1s forwards;
+}
+
+@keyframes logo-appear {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes paw-appear {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .welcome h1 {
+        font-size: 2rem;
+        margin: 2rem auto;
+    }
+}

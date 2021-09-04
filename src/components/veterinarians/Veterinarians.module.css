@@ -1,0 +1,16 @@
+.vets {
+    width: 100%;
+}
+
+.specialities {
+    white-space: normal;
+}
+
+.specialities p {
+    margin: 0;
+    padding: 0 0 1px 0;
+}
+
+.actions {
+    margin: 1.5rem .1rem;
+}

@@ -1,0 +1,15 @@
+.search {
+    min-width: 70%;
+    width: 70%;
+}
+
+.search-group {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 10px;
+}
+
+.actions {
+   margin-left: .1rem;
+}

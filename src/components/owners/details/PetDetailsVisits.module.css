@@ -1,0 +1,40 @@
+.pet-visits-list {
+    list-style: none;
+    margin: 1.4rem auto;
+    padding: 0;
+    width: 100%;
+}
+
+.pet-visits-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.6rem;
+    font-size: 14px;
+    border-radius: 0;
+    border-top: 1px solid #040620;
+    background-color: rgba(0, 21, 47, 0.76);
+}
+
+.pet-visits-label {
+    display: inline-block;
+    text-align: left;
+    font-weight: 600;
+}
+
+.pet-visits-label-date {
+    width: 20%;
+}
+
+.pet-visits-label-description {
+    width: 60%;
+}
+
+.pet-visits-label-actions {
+    width: 20%;
+}
+
+.no-visits {
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
