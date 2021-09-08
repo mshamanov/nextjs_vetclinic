@@ -1,64 +1,14 @@
-import { useRouter } from "next/router";
-import { useContext } from "react";
-import RecordsModifier from "../../../../../../../../src/components/ui/RecordsModifier";
-import VetContext from "../../../../../../../../src/store/vet-context";
-import { parseDateFromInputFormat, parseDateToInputFormat } from "../../../../../../../../src/utils/common-utils";
+import { ObjectId } from "mongodb";
+import EditVisit from "../../../../../../../../src/components/visits/EditVisit";
+import { withMongo } from "../../../../../../../../src/utils/mongodb-utils";
 import Custom404 from "../../../../../../../404";
 
-const EditVisitPage = ({ownerId, petId, visitId}) => {
-    const vetCtx = useContext(VetContext);
-    const router = useRouter();
-
-    const owner = vetCtx.owners.find(owner => owner.id === ownerId);
-    const pet = owner.pets.find(pet => pet.id === petId);
-    const visit = pet.visits.find(visit => visit.id === visitId);
-
-    if (!owner || !pet) {
+const EditVisitPage = ({owner, pet, visit}) => {
+    if (!owner || !pet || !visit) {
         return <Custom404 />
     }
 
-    const controls = {
-        owner: {
-            label: "Owner",
-            defaultValue: owner,
-            disabled: true
-        },
-        pet: {
-            label: "Pet",
-            defaultValue: pet,
-            disabled: true
-        },
-        date: {
-            label: "Date",
-            type: "date",
-            defaultValue: parseDateToInputFormat(visit.date)
-        },
-        description: {
-            label: "Description",
-            defaultValue: visit.description
-        }
-    }
-
-    const sumbitHandler = (event, values) => {
-        event.preventDefault();
-
-        let {date, description} = values;
-        date = parseDateFromInputFormat(date);
-
-        const updatedVisit = visit.clone();
-        Object.assign(updatedVisit, {date, description});
-
-        vetCtx.addVisit(updatedVisit);
-        router.push(`/owners/${owner.id}`);
-    }
-
-    const buttons = {
-        submit: {
-            onSubmit: sumbitHandler
-        }
-    }
-
-    return <RecordsModifier controls={controls} buttons={buttons} />
+    return <EditVisit owner={owner} pet={pet} visit={visit} />
 }
 
 export async function getServerSideProps(context) {
@@ -66,11 +16,67 @@ export async function getServerSideProps(context) {
     const petId = context.params.petId;
     const visitId = context.params.visitId;
 
+    let owner = null;
+    let pet = null;
+    let visit = null;
+
+    try {
+        await withMongo(async (mongo) => {
+            const collection = mongo.db.collection("owners");
+            const result = await collection.aggregate([
+                {"$match": {"_id": new ObjectId(ownerId)}},
+                {
+                    "$addFields": {
+                        "pets": {
+                            "$filter": {
+                                "input": {
+                                    "$map": {
+                                        "input": "$pets",
+                                        "as": "sa",
+                                        "in": {
+                                            "$mergeObjects": [
+                                                "$$sa",
+                                                {
+                                                    "visits": {
+                                                        "$filter": {
+                                                            "input": "$$sa.visits",
+                                                            "as": "sn",
+                                                            "cond": {
+                                                                "$eq": ["$$sn._id", new ObjectId(visitId)]
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    },
+                                },
+                                "as": "sa",
+                                "cond": {
+                                    "$eq": ["$$sa._id", new ObjectId(petId)]
+                                }
+                            }
+                        }
+                    }
+                }]).toArray();
+
+            owner = mongo.normalizeId(result[0]);
+            if (owner) {
+                pet = owner.pets.find(pet => pet.id === petId);
+                if (pet) {
+                    visit = pet.visits[0];
+                }
+            }
+        });
+    } catch (e) {
+        console.log(e);
+    }
+
     return {
         props: {
-            ownerId,
-            petId,
-            visitId
+            owner,
+            pet,
+            visit
         }
     }
 }

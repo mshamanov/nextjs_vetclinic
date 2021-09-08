@@ -1,13 +1,9 @@
-import { useContext } from "react";
+import { ObjectId } from "mongodb";
 import ViewOwner from "../../../src/components/owners/ViewOwner";
-import VetContext from "../../../src/store/vet-context";
+import { withMongo } from "../../../src/utils/mongodb-utils";
 import Custom404 from "../../404";
 
-const ViewOwnerPage = ({ownerId}) => {
-    const vetCtx = useContext(VetContext);
-
-    const owner = vetCtx.owners.find(owner => owner.id === ownerId);
-
+const ViewOwnerPage = ({owner}) => {
     if (!owner) {
         return <Custom404 />
     }
@@ -18,9 +14,21 @@ const ViewOwnerPage = ({ownerId}) => {
 export async function getServerSideProps(context) {
     const ownerId = context.params.ownerId;
 
+    let owner = null;
+
+    try {
+        await withMongo(async (mongo) => {
+            const collection = mongo.db.collection("owners");
+            const result = await collection.findOne({_id: new ObjectId(ownerId)});
+            owner = mongo.normalizeId(result);
+        });
+    } catch (e) {
+        console.log(e);
+    }
+
     return {
         props: {
-            ownerId
+            owner
         }
     }
 }

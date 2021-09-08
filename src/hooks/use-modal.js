@@ -1,39 +1,85 @@
-import { useCallback, useRef, useState } from "react";
-import Modal from "../components/ui/Modal";
+import { useCallback, useReducer } from "react";
+import Modal from "../components/ui/modal/Modal";
+
+const CONFIRM_MODAL = "confirm";
+const ERROR_MODAL = "error";
+
+const modalReducer = (state, {type, payload}) => {
+    let modalOptions;
+
+    if (type === CONFIRM_MODAL) {
+        modalOptions = {
+            buttons: [
+                {
+                    title: "Accept",
+                    onClick: payload.onAccept,
+                    success: true
+                },
+                {
+                    title: "Cancel",
+                    onClick: payload.onCancel,
+                    danger: true
+                }
+            ],
+            title: payload.title || "Confirmation",
+            message: payload.message || "Are you sure?"
+        }
+    } else if (type === ERROR_MODAL) {
+        modalOptions = {
+            buttons: [
+                {
+                    title: "Ok",
+                    onClick: payload.onAccept,
+                }
+            ],
+            title: payload.title || "Error",
+            message: payload.message || "Error occurred!",
+            danger: true
+        }
+    } else if (type === "HIDDEN") {
+        return {modal: null};
+    }
+
+    return {
+        modal: <Modal {...modalOptions}><p>{modalOptions.message}</p></Modal>
+    }
+}
 
 const useModal = () => {
-    const [active, setActive] = useState(false);
+    const [modalData, dispatch] = useReducer(modalReducer, {modal: null});
 
-    const backdropClickHandler = useCallback(() => {
-        setActive(false);
+    const closeModalHandler = useCallback(() => {
+        dispatch({type: "HIDDEN"})
     }, []);
 
-    const modalTitle = useRef();
-    const modalMessage = useRef();
-    const onConfirm = useRef();
+    const showModal = useCallback((type, title, message, onAccept) => {
+        dispatch({
+            type,
+            payload: {
+                title,
+                message,
+                onAccept: () => {
+                    if (onAccept) onAccept();
+                    closeModalHandler();
+                },
+                onCancel: closeModalHandler
+            }
+        })
+    }, [closeModalHandler]);
 
-    const modal = active ?
-        <Modal title={modalTitle.current} onConfirm={onConfirm.current} onBackdropClick={backdropClickHandler}>
-            <p>{modalMessage.current}</p>
-        </Modal> : null;
+    const showError = useCallback((title, message, onAccept) => {
+        showModal(ERROR_MODAL, title, message, onAccept);
+    }, [showModal]);
 
-    const showModal = useCallback((title = "Confirmation", message = "Are you sure?", onConfirmCallback) => {
-        function onConfirmHandler() {
-            onConfirmCallback();
-            setActive(false);
-        }
+    const showConfirm = useCallback((title, message, onAccept) => {
+        showModal(CONFIRM_MODAL, title, message, onAccept);
+    }, [showModal]);
 
-        modalTitle.current = title;
-        modalMessage.current = message;
-        onConfirm.current = onConfirmHandler;
-
-        setActive(true);
-    }, []);
-
-    return [
-        modal,
-        showModal
-    ]
+    return {
+        modal: modalData.modal,
+        showError,
+        showConfirm
+    }
 }
 
 export default useModal;

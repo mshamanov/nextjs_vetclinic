@@ -1,68 +1,34 @@
-import { useRouter } from "next/router";
-import { useContext } from "react";
-import RecordsModifier from "../../../../src/components/ui/RecordsModifier";
-import VetContext from "../../../../src/store/vet-context";
+import { ObjectId } from "mongodb";
+import EditOwner from "../../../../src/components/owners/EditOwner";
+import { withMongo } from "../../../../src/utils/mongodb-utils";
 import Custom404 from "../../../404";
 
-const EditOwnerPage = ({ownerId}) => {
-    const vetCtx = useContext(VetContext);
-    const router = useRouter();
-
-    const owner = vetCtx.owners.find(owner => owner.id === ownerId);
-
+const EditOwnerPage = ({owner}) => {
     if (!owner) {
         return <Custom404 />
     }
 
-    const controls = {
-        firstName: {
-            label: "First Name",
-            defaultValue: owner.firstName,
-        },
-        lastName: {
-            label: "Last Name",
-            defaultValue: owner.lastName,
-        },
-        address: {
-            label: "Address",
-            defaultValue: owner.address,
-        },
-        phone: {
-            label: "Phone",
-            defaultValue: owner.phone,
-        },
-        email: {
-            label: "Email",
-            defaultValue: owner.email,
-            type: "email"
-        }
-    }
-
-    const sumbitHandler = (event, values) => {
-        event.preventDefault();
-
-        const updatedOwner = owner.clone();
-        Object.assign(updatedOwner, values);
-
-        vetCtx.addOwner(updatedOwner);
-        router.back();
-    }
-
-    const buttons = {
-        submit: {
-            onSubmit: sumbitHandler
-        }
-    }
-
-    return <RecordsModifier title="Edit Owner" controls={controls} buttons={buttons} />
+    return <EditOwner owner={owner} />
 }
 
 export async function getServerSideProps(context) {
     const ownerId = context.params.ownerId;
 
+    let owner = null;
+
+    try {
+        await withMongo(async (mongo) => {
+            const collection = mongo.db.collection("owners");
+            const result = await collection.findOne({_id: new ObjectId(ownerId)}, {projection: {"pets": 0}});
+            owner = mongo.normalizeId(result);
+        });
+    } catch (e) {
+        console.log(e);
+    }
+
     return {
         props: {
-            ownerId
+            owner
         }
     }
 }

@@ -1,17 +1,18 @@
-import { generateId } from "../utils/common-utils";
-
-class Person {
+class PersonDTO {
     /**
      * Creates a person
      *
+     * @param id {string}
      * @param firstName {string}
      * @param lastName {string}
      * @param address {string}
      * @param phone {string}
      * @param email {string}
      */
-    constructor(firstName, lastName, address, phone, email) {
-        this.id = generateId(this.constructor.name.toLowerCase());
+    constructor(id, firstName, lastName, address, phone, email) {
+        if (id) {
+            this.id = id;
+        }
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
@@ -20,4 +21,4 @@ class Person {
     }
 }
 
-export default Person;
+export default PersonDTO;

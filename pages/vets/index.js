@@ -1,11 +1,29 @@
-import { useContext } from "react";
 import Veterinarians from "../../src/components/veterinarians/Veterinarians";
-import VetContext from "../../src/store/vet-context";
+import { withMongo } from "../../src/utils/mongodb-utils";
 
-function VeterinariansPage() {
-    const vetCtx = useContext(VetContext);
+function VeterinariansPage({vets}) {
+    return <Veterinarians vets={vets} />
+}
 
-    return <Veterinarians vets={vetCtx.vets} />
+export async function getServerSideProps() {
+    let vets = null;
+
+    try {
+        await withMongo(async (mongo) => {
+            const collection = mongo.db.collection("vets");
+
+            const result = await collection.find().toArray();
+            vets = result.map(vet => mongo.normalizeId(vet));
+        });
+    } catch (e) {
+        console.log(e);
+    }
+
+    return {
+        props: {
+            vets
+        }
+    }
 }
 
 export default VeterinariansPage;

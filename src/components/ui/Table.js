@@ -3,14 +3,11 @@ import { useState } from "react";
 import ActionButton from "./ActionButton";
 import classes from "./Table.module.css";
 
-const DESC = "desc";
-const ASC = "asc";
+const DESC = "descending";
+const ASC = "ascending";
 
 const Table = ({contents: {headers, records}, onView, onDelete, showActions = true, showSorting = true}) => {
-    console.log(headers);
     const [sortBy, setSortBy] = useState({...headers.find((header) => header.name !== "id"), order: ASC});
-
-    console.log(sortBy);
 
     const sortedRecords = sortBy ? records.sort((record1, record2) => {
         let val1 = record1[sortBy.fieldName];

@@ -1,76 +1,37 @@
-import { useRouter } from "next/router";
-import { useContext } from "react";
-import RecordsModifier from "../../../../src/components/ui/RecordsModifier";
-import VetContext from "../../../../src/store/vet-context";
+import { ObjectId } from "mongodb";
+import EditVet from "../../../../src/components/vets/EditVet";
+import { withMongo } from "../../../../src/utils/mongodb-utils";
 import Custom404 from "../../../404";
 
-const EditVetPage = ({vetId}) => {
-    const vetCtx = useContext(VetContext);
-    const router = useRouter();
-
-    const vet = vetCtx.vets.find(vet => vet.id === vetId);
-
+const EditVetPage = ({vet}) => {
     if (!vet) {
         return <Custom404 />
     }
 
-    const controls = {
-        firstName: {
-            label: "First Name",
-            defaultValue: vet.firstName
-        },
-        lastName: {
-            label: "Last Name",
-            defaultValue: vet.lastName
-        },
-        address: {
-            label: "Address",
-            defaultValue: vet.address
-        },
-        phone: {
-            label: "Phone",
-            defaultValue: vet.phone
-        },
-        email: {
-            label: "Email",
-            type: "email",
-            defaultValue: vet.email
-        },
-        specialities: {
-            label: "Specialities (comma separated)",
-            defaultValue: vet.specialities.join(", ")
-        }
-    }
-
-    const sumbitHandler = (event, values) => {
-        event.preventDefault();
-
-        const updatedVet = vet.clone();
-        let {specialities, ...rest} = values;
-        specialities = specialities.split(/\s*,\s*/);
-
-        Object.assign(updatedVet, {...rest}, {specialities});
-        vetCtx.addVet(updatedVet);
-        router.back();
-    }
-
-    const buttons = {
-        submit: {
-            onSubmit: sumbitHandler
-        }
-    }
-
-    return <RecordsModifier title="Edit Veterinarian" controls={controls} buttons={buttons} />
+    return <EditVet vet={vet} />
 }
 
 export async function getServerSideProps(context) {
     const vetId = context.params.vetId;
 
+    let vet = null;
+
+    try {
+        await withMongo(async (mongo) => {
+            const collection = mongo.db.collection("vets");
+            const result = await collection.findOne({_id: new ObjectId(vetId)});
+            vet = mongo.normalizeId(result);
+        });
+    } catch (e) {
+        console.log(e);
+    }
+
     return {
         props: {
-            vetId
+            vet
         }
     }
 }
+
 
 export default EditVetPage;

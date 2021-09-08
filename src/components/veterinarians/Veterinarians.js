@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
-import { Fragment, useContext } from "react";
-import useModal from "../../hooks/use-modal";
-import VetContext from "../../store/vet-context";
+import { Fragment, useState } from "react";
+import useHttpRequest from "../../hooks/use-http-request";
 import ActionButton from "../ui/ActionButton";
 import Actions from "../ui/Actions";
 import Table from "../ui/Table";
@@ -9,21 +8,27 @@ import TitledCard from "../ui/TitledCard";
 import classes from "./Veterinarians.module.css";
 
 const Veterinarians = ({vets}) => {
-    const vetCtx = useContext(VetContext);
     const router = useRouter();
-    const [modal, showModal] = useModal();
+    const [vetsData, setVetsData] = useState(vets);
+    const {modal, http, spinner} = useHttpRequest();
 
     const viewVeterinarianHandler = (vetId) => {
         router.push(`/vets/${vetId}`);
     }
 
+    const onDeleteVetRequestComplete = (error, data, vetId) => {
+        if (!error) {
+            setVetsData(prevVets => prevVets.filter(v => v.id !== vetId));
+        }
+    }
+
     const confirmDeleteHandler = (vetId) => {
-        vetCtx.removeVet(vetId);
+        http.sendRequest(`/api/vets?id=${vetId}`, "DELETE", null, (error, data) => onDeleteVetRequestComplete(error, data, vetId));
     }
 
     const deleteVeterinarianHandler = (vetId) => {
-        const vet = vetCtx.vets.find(vet => vet.id === vetId);
-        showModal("Confirmation", `Are you sure you want to delete ${vet}?`,
+        const vet = vetsData.find(vet => vet.id === vetId);
+        modal.showConfirm("Confirmation", `Are you sure you want to delete ${vet.firstName} ${vet.lastName}?`,
             () => confirmDeleteHandler(vetId));
     };
 
@@ -31,9 +36,11 @@ const Veterinarians = ({vets}) => {
         router.push(`/vets/add`);
     }
 
-    if (!vets || (vets && vets.length === 0)) {
+    if (!vetsData || (vetsData && vetsData.length === 0)) {
         return <Fragment>
             <h1 className="title">No Veterinarians</h1>
+            <p />
+            <ActionButton medium onClick={addVeterinarianHandler}>Add New Veterinarian</ActionButton>
         </Fragment>
     }
 
@@ -58,11 +65,12 @@ const Veterinarians = ({vets}) => {
                 mapFn: mapSpecialities
             }
         ],
-        records: vets
+        records: vetsData
     }
 
     return <div className={classes.vets}>
-        {modal}
+        {modal.modalDialog}
+        {spinner.spinnerDialog}
         <TitledCard title="Veterinarians">
             <Table contents={tableContents} onView={viewVeterinarianHandler} onDelete={deleteVeterinarianHandler} />
         </TitledCard>

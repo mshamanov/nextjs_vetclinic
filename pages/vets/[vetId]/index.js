@@ -1,13 +1,9 @@
-import { useContext } from "react";
+import { ObjectId } from "mongodb";
 import ViewVeterinarian from "../../../src/components/veterinarians/ViewVeterinarian";
-import VetContext from "../../../src/store/vet-context";
+import { withMongo } from "../../../src/utils/mongodb-utils";
 import Custom404 from "../../404";
 
-const ViewVetPage = ({vetId}) => {
-    const vetCtx = useContext(VetContext);
-
-    const vet = vetCtx.vets.find(vet => vet.id === vetId);
-
+const ViewVetPage = ({vet}) => {
     if (!vet) {
         return <Custom404 />
     }
@@ -18,9 +14,21 @@ const ViewVetPage = ({vetId}) => {
 export async function getServerSideProps(context) {
     const vetId = context.params.vetId;
 
+    let vet = null;
+
+    try {
+        await withMongo(async (mongo) => {
+            const collection = mongo.db.collection("vets");
+            const result = await collection.findOne({_id: new ObjectId(vetId)});
+            vet = mongo.normalizeId(result);
+        });
+    } catch (e) {
+        console.log(e);
+    }
+
     return {
         props: {
-            vetId
+            vet
         }
     }
 }

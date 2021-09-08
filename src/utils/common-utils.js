@@ -1,10 +1,16 @@
-let idx = 0;
-
-export const generateId = function (prefix = "") {
-    return `${prefix}-${idx++}`;
+export function fromISODateToLocaleString(date, locales = ["en-US"], options = {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+}) {
+    return new Date(date).toLocaleDateString(locales, options);
 }
 
 export function parseDateToInputFormat(date) {
+    if (!(date instanceof Date)) {
+        date = new Date(date);
+    }
+
     const d = date.getDate();
     const y = date.getFullYear();
     const m = date.getMonth() + 1;
@@ -20,7 +26,9 @@ export function parseDateFromInputFormat(value) {
     let date;
 
     value.replace(/(\d{1,4})-(\d{2})-(\d{2})/g, (_, year, month, day) => {
-        date = new Date(year, +month - 1, day);
+        date = new Date();
+        date.setFullYear(year);
+        date.setMonth(+month - 1, day);
     });
 
     return date;

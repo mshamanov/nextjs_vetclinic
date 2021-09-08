@@ -1,24 +1,15 @@
 import { useRouter } from "next/router";
-import { Fragment, useContext } from "react";
-import useModal from "../../../hooks/use-modal";
-import VetContext from "../../../store/vet-context";
+import { Fragment } from "react";
 import { getKeyValuePairs, mapKeyAsTitle } from "../../../utils/common-utils";
 import ActionButton from "../../ui/ActionButton";
 import Actions from "../../ui/Actions";
 import DetailsList from "../../ui/details/DetailsList";
 
-const OwnerDetails = ({owner}) => {
-    const [modal, showModal] = useModal();
-    const vetCtx = useContext(VetContext);
+const OwnerDetails = ({owner, onOwnerDelete}) => {
     const router = useRouter();
 
-    const confirmDeleteHandler = () => {
-        vetCtx.removeOwner(owner.id);
-        router.back();
-    }
-
     const deleteOwnerHandler = () => {
-        showModal("Confirmation", `Are you sure you want to delete ${owner}?`, confirmDeleteHandler);
+        onOwnerDelete();
     };
 
     const editOwnerHandler = () => {
@@ -32,7 +23,6 @@ const OwnerDetails = ({owner}) => {
     const list = getKeyValuePairs(owner, mapKeyAsTitle);
 
     return <Fragment>
-        {modal}
         <DetailsList list={list} />
         <Actions>
             <ActionButton medium onClick={editOwnerHandler}>Edit Owner</ActionButton>
